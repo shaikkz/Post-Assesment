@@ -1,0 +1,40 @@
+# Post-Assesment
+Replica SET
+This kind is used usually when we want Pods to be created of the same containers.
+By comparing teh desired current , ready 
+Supports set selector 
+Match selector label
+Kubectl get rs
+Situation : In the DB when deposition happens then at all times you want the DB to be up so we can select one set and keep a replica up always,
+beacuse in production you would want require the pods to be 100%.
+Draw bcak : In some scenarios due to load balancing same pods will not be allocated to each node. So in such cases we use daemon set.
+kubectl apply -f kubia-replicaset.yaml 
+kubectl get po -o wide
+curl <ip>:8000
+
+kind:service
+metadata:
+name:kubia2
+spec:
+   clusteIP:10.99.98.10
+ports:
+   ports:80
+target port:8000
+Selector:
+  spp:kubia
+kubectl get svc 
+service is listnening in port 80
+if labels change then it will not 
+
+
+
+*******************
+*******************
+*******************
+kubectl apply -f cronjob.yaml
+vi cronjob.yaml
+kubectl get jobs
+In jobs it completes 1 by 1 . like completed 6/6
+5completion , 2 parralel -5 jobs to be run in total but at a time 2 only will be running
+Jobs create pods that are meant for a specific task whereas cronjobs also nee dto complete an activity but the time period is alreday defined.
+kubectl get cronjob crontext
