@@ -1,0 +1,115 @@
+# Post-Assesment
+Voting
+Run all yaml file because its all applications we head need.
+kubectl apply -f .
+kubectl get svc, and see the nodeports and see it in the browser.
+1)When Voting POD is deleted .
+NO, it does not get affected immediately the next new pod will be created,as application set is present of having replica=1.
+As its under deployment , also it does not have anything to store.
+drawback :some time gap maybe there , when maintaining the deployment.
+kubectl scale deploy vote ---replicas=3
+
+2)When worker POD is deleted.
+When deleting the worker pod , again anew pod will come up by replication.
+here voting pod has no usses as it will take posts to radis,
+If the worker nodes goes down , while the data was on its way , then loss of data will occur.
+Logs gets deleted when worker node is deleted but gives the data right as actual is in database 
+Worker container restarts
+
+3)Deleting the DB
+Voting pod will work fine
+On the result pod , we see no change as no output seen, in the logs we see something like closed by other party.
+DB will restart but the result could not connect to DB.
+Here result is connected by a socket/synchronous connection,it searches for old old port socket .
+Only after restarting the result , it will get new DB.
+So API will access the data through the layer.
+
+4)When result is deleted
+Here it will be at fault 
+Socket searches for DB
+After the result restarts (deletes) the previous DB data is new
+Kubernetes is a stateless application
+
+
+***********************
+***********************
+***********************
+
+services
+
+In service , when 1 pod wants to connect with the 2nd pod in another host thats when service layer is used.
+Pods identity is dynamic and not known to public.
+spec:
+   cluster IP:10.99.90.10
+  ports:
+    port:80
+target port:8080
+selector :
+app:kubia
+
+-->kubectl get svc 
+service layer is to listen at port 80.
+-->kubectl get ep
+by giving this we can find the end pods with 8080 ports.
+
+Pods are selected by selector app kubia.
+But by creating a nodeport we are giving port to each node which then connects to service layer, in the layer.Then the layer connects with the pods with the target 
+pods.
+Here target port is 8000
+check if the end points are having the same/desired selector 
+Since the nodeport is created. will see if the service IP is created by it ,is connecting properly or not
+check if the public IP is right for the nodeport given.
+check all the endpoints.
+
+
+************************
+************************
+************************
+
+Deployment 
+combination of RS + service 
+create the RS by label then makes 2 services, stitch it.
+--->kubectl get deploy
+3 syllabus Pod name,deployment and differenciate the POD .
+--->kubectl apply -f kubia deploy -service yaml
+appversion:apps/V1
+
+Rolling update 
+helps in updation by not replacing , all the pods at a time.
+Pods running through containers and contains through by images
+
+eg. If Billing app is there and another payment app  , and  a new feature V2 is to be introduced.
+
+-->Earlier entire production nodes had to be brought down but now while being up we can upgrade the version.
+V1 pod5, pod4, pod3, pod2, pod1
+V2 pod1, pod2, pod3, pod4, pod5
+During the change we can see that V2 initially starts at pod1 then pod2 is made to v2 ...and continue sto change.
+To stop with zero down time , w ecan change
+MINReadySeconds:5
+0/1 container created
+1/1 running
+
+-->kubectl patch deployment kubia -p '{"spec":{"minReadySeconds:10}}'
+to change the image 
+-->kubectl set images deployment kubia node js=luksa/kubiaV2
+
+*******************************
+*******************************
+*******************************
+
+
+Replication Set
+This kind is used usually when we want Pods to be created of the same containers.
+By comparing teh desired current , ready 
+Supports set selector 
+Match selector label
+Kubectl get rs
+Situation : In the DB when deposition happens then at all times you want the DB to be up so we can select one set and keep a replica up always,
+beacuse in production you would want require the pods to be 100%.
+Draw bcak : In some scenarios due to load balancing same pods will not be allocated to each node. So in such cases we use daemon set.
+eg.If a config manager wants to check the storage happening in all nodes , if corrupted or not.If RS is used then few pods will not be alloted to specif nodes .
+In such case using kind as sdeamon set will be helpful by using node selector.
+no . of node = no of pods(monitoring ability)
+Kubectl get ds
+By labelling the node (disk =ssd)
+eg Kubectl label nodes ip -172-132-29-195 disk =ssd
